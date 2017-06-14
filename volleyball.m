@@ -16,6 +16,16 @@ resultnameQuestions = fullfile('Logfiles', strcat('Sub',num2str(subjectID),'ques
 backupfile = fullfile('Logfiles', strcat('Bckup_Sub',num2str(subjectID), '_', DateTime, '.mat'));                    %backup result file
 %% ========= EXPERIMENT STRUCTURE ========= %
 training = 10;                                                     %set number of trials in the training run
+
+%Create noise around block lenght
+% A = [-1 1];
+% short = 5;
+% long = 40;
+% noisyShort = short + A(randi(numel(A)))*randi(size(short));
+% noisyLong = longt + A(randi(numel(A)))*randi(size(long));
+
+%trialsPerBlock = [noisyShort noisyLong]
+
 trialsPerBlock = [40 40 40 40 20 20 20 10 10 10];                  %4x40, 3x30, 3x10 
 run1 = trialsPerBlock(randperm(length(trialsPerBlock)));           %shuffle to create run1
 run2 = trialsPerBlock(randperm(length(trialsPerBlock)));           %shuffle to create run2 
