@@ -1,9 +1,8 @@
-%clear workspace
-clc;
+clc; %clear workspace
 
 %% ========= SET LOGFILES ========= 
-subjectID = input('Participant number: ');
-DateTime = datestr(now,'yyyymmdd-HHMM');
+subjectID = input('Participant number: ');  %input subject number
+DateTime = datestr(now,'yyyymmdd-HHMM');    %get date and time for logfile name
 
 %create a directory called Logfiles if there isn't one already
 if ~exist('Logfiles', 'dir')
@@ -13,27 +12,49 @@ end
 %store result names 
 resultname = fullfile('Logfiles', strcat('Sub',num2str(subjectID),'_', DateTime, '.mat'));                          %for choices
 resultnameQuestions = fullfile('Logfiles', strcat('Sub',num2str(subjectID),'questions_', DateTime, '.mat'));        %for end-of-block questions
-backupfile = fullfile('Logfiles', strcat('Bckup_Sub',num2str(subjectID), '_', DateTime, '.mat'));                    %backup result file
+backupfile = fullfile('Logfiles', strcat('Bckup_Sub',num2str(subjectID), '_', DateTime, '.mat'));                   %backup logfile with the whole workspace, in case of nasty aborts
 %% ========= EXPERIMENT STRUCTURE ========= %
-training = 10;                                                     %set number of trials in the training run
+%Block structure
+shortBlocks = [4 5 6];
+longBlocks = [38 40 42];
+learnLength = [0 1]; %0 for short, 1 for long
 
-%Create noise around block lenght
-% A = [-1 1];
-% short = 5;
-% long = 40;
-% noisyShort = short + A(randi(numel(A)))*randi(size(short));
-% noisyLong = longt + A(randi(numel(A)))*randi(size(long));
-
-%trialsPerBlock = [noisyShort noisyLong]
-
-trialsPerBlock = [40 40 40 40 20 20 20 10 10 10];                  %4x40, 3x30, 3x10 
-run1 = trialsPerBlock(randperm(length(trialsPerBlock)));           %shuffle to create run1
-run2 = trialsPerBlock(randperm(length(trialsPerBlock)));           %shuffle to create run2 
-run3 = trialsPerBlock(randperm(length(trialsPerBlock)));           %shuffle to create run3 
+runStructure = [0 0 0 0 0 1 1 1 1 1];                          %half of the blocks per run are short blocks, half are long 
+training = 10;  %set number of trials in the training run
+run1 = runStructure(randperm(length(runStructure)));           %shuffle learnLength to create run1
+run2 = runStructure(randperm(length(runStructure)));           %to create run2 
+run3 = runStructure(randperm(length(runStructure)));           %to create run3 
 expStructure = {training, run1, run2, run3};
-nruns = numel(expStructure);                                       %count elements in cell array expStructure to determine number of runs
+nruns = numel(expStructure);                                   %count elements in expStructure to determine number of runs
 
 %% ========= PARAMETERS & DATA PREALLOCATION ========= %
+T = readtable('ContingencyTableFinal.csv');
+rows = 1:15;
+
+vars4 = {'POA4','POnotA4'};
+T4 = T(rows,vars4);
+contTable4 = table2array(T4);
+
+vars5 = {'POA5','POnotA5'};
+T5 = T(rows,vars5);
+contTable5 = table2array(T5);
+
+vars6 = {'POA6','POnotA6'};
+T6 = T(rows,vars6);
+contTable6 = table2array(T6);
+
+vars38 = {'POA38','POnotA38'};
+T38 = T(rows,vars38);
+contTable38 = table2array(T38);
+
+vars40 = {'POA40','POnotA40'};
+T40 = T(rows,vars40);
+contTable40 = table2array(T40);
+
+vars42 = {'POA42','POnotA42'};
+T42 = T(rows,vars42);
+contTable42 = table2array(T42);
+
 contTable = [9 3; 7 1; 8 5; 6 3; 6 6; 4 4; 5 8; 3 6; 3 9; 1 7];   %Contingency table {play, do not play} for each block: 1 = 1/10 ; 2 = 2/10 ; 3 = 3/10 ; 4 = 4/10 ; 5 = 5 / 10; ...
 conTableShuffled = contTable(randperm(10),:);                     %Shuffle contingencies for each block
 cond = [0 0 0 0 0 1 1 1 1 1];                                     %for play_pause or pause_play display, changes every block
@@ -52,7 +73,7 @@ pos = 1;                                     %initial position to go back and fo
 Screen('DrawTexture', win, texslide1);       %show first slide      
 Screen('Flip',win);                             
 
-while exitInstructions == false                 %loop instruction slides until space key is pressed
+while exitInstructions == false              %loop instruction slides until space key is pressed
     [secs, keyCode, deltaSecs] = KbWait([],2);  %waits for key press
     
     %depending on button press, either move pos or exit instructions  
@@ -89,26 +110,36 @@ runnb = 0;   %initial run value
 blocknb = 0; %initial block value
 trialnb = 0; %initial trial value
 
+%RUN LOOP
 for i = 1:nruns
     condOrder = cond(randperm(length(cond)));   %vector of 0s and 1s for play_pause or pause_play conditions
-    nblocks = length(expStructure{i});          %determine number of blocks; it will be 1 for training and 10 for the other 3 runs
-    
-for x = 1:nblocks
-          
+    nblocks = length(expStructure{i});          %determine number of blocks for each run; it will be 1 for training and 10 for the other 3 runs
+
+%BLOCK LOOP
+for x = 1:nblocks          
         k=1;
         blocknb = blocknb + 1;
         
+        %Set contingency
         if i == 1
             P_OA = [5 5];                   %set probability at .5 for the training
             deltaP = 0;
         else
-            P_OA = conTableShuffled(x,:);       %set P_OA = {play, do not play} for this block
+            P_OA = conTableShuffled(x,:);       %set P_OA = {play, do not play} for this block %THIS IS CHOSEN BY READING ONE BY ONE FROM TABLE
             deltaP = P_OA(:,1) - P_OA(:,2);     %define deltaP
         end
         
-        ntrials = expStructure{i}(1,x); %set ntrials for each block between 40, 20 and 10
-        lateTrials = zeros(ntrials,1);  %preallocate late trials occurrences
-    
+        %Determine whether this is going to be a short or a long block
+        learningDuration = expStructure{i}(1,x); %for each block either 0 or 1 %OR READ IN TABLE
+        if learningDuration == 0 
+           pickPlace = randi(length(shortBlocks));
+           ntrials = shortBlocks(pickPlace);
+        else
+           pickPlace = randi(length(longBlocks));
+           ntrials = longBlocks(pickPlace);
+        end
+        
+        lateTrials = zeros(ntrials,1);  %preallocate late trials occurrences    
         thisblockplayer = players(:,x); %chose this block's "player"
     
         %First screen of the block, indtroduce the "player"
@@ -121,7 +152,8 @@ for x = 1:nblocks
         Screen('Flip',win);
         WaitSecs(.1);
  
-        while k <= ntrials %use while instead of for loop to accomodate late trials
+        %TRIAL LOOP
+        while k <= ntrials                                      %use while instead of for loop to accomodate late trials
             save(backupfile)                                    % backs the entire workspace up just in case we have to do a nasty abort
             trialnb = trialnb + 1;
             thistrial(trialnb,1) = k;                           %store number of trial
