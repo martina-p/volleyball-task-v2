@@ -14,54 +14,51 @@ resultname = fullfile('Logfiles', strcat('Sub',num2str(subjectID),'_', DateTime,
 resultnameQuestions = fullfile('Logfiles', strcat('Sub',num2str(subjectID),'questions_', DateTime, '.mat'));        %for end-of-block questions
 backupfile = fullfile('Logfiles', strcat('Bckup_Sub',num2str(subjectID), '_', DateTime, '.mat'));                   %backup logfile with the whole workspace, in case of nasty aborts
 %% ========= SET CONTINGENCIES & EXPERIMENT STRUCTURE ========= %
-T = readtable('ContingencyTableFinal.csv');         %read table that stores contingencies
-shuffledT = T(randperm(size(T,1)),:);               %shuffle T rows
-rows = shuffledT.Condition;                         %pick rows for indexing
+T = readtable('ContingencyTableFinal.csv');         %read table that stores the 30 conditions with their contingencies and learning duration
+shuffledT = T(randperm(size(T,1)),:);               %shuffle T rows (ie shuffle the 30 conditions)
+condition = shuffledT.Condition;                    %pick rows for indexing
 
 %Create contingency tables for different number of trials
-vars4 = {'POA4','POnotA4'};
-T4 = shuffledT(rows,vars4);
-contTable4 = table2array(T4);
+poa4 = shuffledT.POA4;
+ponota4 = shuffledT.POnotA4;
+contTable4 = [poa4, ponota4];
 
-vars5 = {'POA5','POnotA5'};
-T5 = shuffledT(rows,vars5);
-contTable5 = table2array(T5);
+poa5 = shuffledT.POA5;
+ponota5 = shuffledT.POnotA5;
+contTable5 = [poa5, ponota5];
 
-vars6 = {'POA6','POnotA6'};
-T6 = shuffledT(rows,vars6);
-contTable6 = table2array(T6);
+poa6 = shuffledT.POA6;
+ponota6 = shuffledT.POnotA6;
+contTable6 = [poa6, ponota6];
 
-vars38 = {'POA38','POnotA38'};
-T38 = shuffledT(rows,vars38);
-contTable38 = table2array(T38);
+poa38 = shuffledT.POA38;
+ponota38 = shuffledT.POnotA38;
+contTable38 = [poa38, ponota38];
 
-vars40 = {'POA40','POnotA40'};
-T40 = shuffledT(rows,vars40);
-contTable40 = table2array(T40);
+poa40 = shuffledT.POA40;
+ponota40 = shuffledT.POnotA40;
+contTable40 = [poa40, ponota40];
 
-vars42 = {'POA42','POnotA42'};
-T42 = shuffledT(rows,vars42);
-contTable42 = table2array(T42);
+poa42 = shuffledT.POA42;
+ponota42 = shuffledT.POnotA42;
+contTable42 = [poa42, ponota42];
 
 run1 = shuffledT{1:10,'LearnDur'};            %determine the duration (short or long) for each block in run1 (0 short, 1 long)         
-run2 = shuffledT{11:20,'LearnDur'};           
-run3 = shuffledT{21:30,'LearnDur'};
-training = 10;                               %set number of trials in the training run
+run2 = shuffledT{11:20,'LearnDur'};           %determine the duration (short or long) for each block in run2 (0 short, 1 long)
+run3 = shuffledT{21:30,'LearnDur'};           %determine the duration (short or long) for each block in run3 (0 short, 1 long)
+training = 10;                                %determine the duration (10 trials) of training run
 expStructure = {training, run1, run2, run3};
-nruns = numel(expStructure);                                   %count elements in expStructure to determine number of runs
+nruns = numel(expStructure);                  %count elements in expStructure to determine number of runs
 
-%% ========= PARAMETERS & DATA PREALLOCATION ========= %
+%% ========= OTHER PARAMETERS & DATA PREALLOCATION ========= %
 %Block structure
 shortBlocks = [4 5 6];
 longBlocks = [38 40 42];
 
-%contTable = [9 3; 7 1; 8 5; 6 3; 6 6; 4 4; 5 8; 3 6; 3 9; 1 7];   %Contingency table {play, do not play} for each block: 1 = 1/10 ; 2 = 2/10 ; 3 = 3/10 ; 4 = 4/10 ; 5 = 5 / 10; ...
-%conTableShuffled = contTable(randperm(10),:);                     %Shuffle contingencies for each block
 cond = [0 0 0 0 0 1 1 1 1 1];                                     %for play_pause or pause_play display, changes every block
-
 players = randperm(30+1);                                         %create as many unique "player numbers" as there are blocks, + 1 for the practice run
 thisblock = zeros(310,1);                                         %preallocate block nr storage to be recorded for each trial
-condition = zeros(310,1);                                         %preallocate condition (play_pause or pause_play) to be recorded for each trial
+stimOrder = zeros(310,1);                                         %preallocate condition (play_pause or pause_play) to be recorded for each trial
 
 %% ========= INSTRUCTIONS ========= %
 psychExpInit;                                %start PTB
@@ -107,19 +104,18 @@ end
 %% ========= LOOPS (RUN, BLOCK, TRIAL) ========= %
 runnb = 0;   %initial run value
 blocknb = 0; %initial block value
-trialnb = 0; %initial trial value
 
 %RUN LOOP
 for i = 1:nruns
-    condOrder = cond(randperm(length(cond)));   %vector of 0s and 1s for play_pause or pause_play conditions
+    condOrder = cond(randperm(length(cond)));   %determine play_pause or pause_play condition
     nblocks = length(expStructure{i});          %determine number of blocks for each run; it will be 1 for training and 10 for the other 3 runs
 
 %BLOCK LOOP
 for x = 1:nblocks          
-        k=1;
         blocknb = blocknb + 1;
-               
-        %Determine whether this is going to be a short or a long block
+          
+        %Determine exact number of trials (4, 5, 6 or 38, 40, 42) depending
+        %on learning duration of condition
         if expStructure{i}(x,1) == 0 
            pickPlace = randi(length(shortBlocks));
            ntrials = shortBlocks(pickPlace);
@@ -128,12 +124,12 @@ for x = 1:nblocks
            ntrials = longBlocks(pickPlace);
         end
         
-        %Set contingencies
+        %Set contingencies, taking into account number of trials:
         %For practice trials
         if i == 1
             ntrials = 10;
             trials_P_OA = zeros(10,2);
-            P_OA = [5 5];                   %set probability at .5 for the training
+            P_OA = [5 5];
         end
         
         %For real trials
@@ -158,6 +154,7 @@ for x = 1:nblocks
         end
         
         respEndOfBlock = {length(ntrials),4};                      %prealocate responses to end-of-block questions
+        
         %Set pseudo-random sequence of outcomes
         nresp = 2;
         for j=1:nresp                         %Loop over actions
@@ -168,11 +165,12 @@ for x = 1:nblocks
                 end;
             end;
         end;
-        trials_P_OA_shuffled = trials_P_OA(randperm(ntrials),:); %Shuffle trials_P_OA
+        trials_P_OA_shuffled = trials_P_OA(randperm(ntrials),:); %Shuffle sequence of outcomes trials_P_OA
         
         lateTrials = zeros(ntrials,1);  %preallocate late trials occurrences    
         thisblockplayer = players(:,x); %chose this block's "player"
     
+        %PTB display:
         %First screen of the block, indtroduce the "player"
         DrawFormattedText(win,['Stai per simulare una partita della squadra numero  ' num2str(thisblockplayer)],'center','center',white);
         Screen('Flip',win);
@@ -182,20 +180,24 @@ for x = 1:nblocks
         Screen('DrawLines',win,crossLines,crossWidth,crossColor,[xc,yc]);
         Screen('Flip',win);
         WaitSecs(.1);
+        
+        k = 0;
  
         %TRIAL LOOP
         while k <= ntrials                                      %use while instead of for loop to accomodate late trials
-            save(backupfile)                                    % backs the entire workspace up just in case we have to do a nasty abort
+            trialnb = 0;
             trialnb = trialnb + 1;
             thistrial(trialnb,1) = k;                           %store number of trial
             thisblock(trialnb,1) = blocknb;                     %store block nr
-            condition(trialnb,1) = condOrder(:,x);              %store condition type (play_pause or pause_play)
-            %P_OA(trialnb,1) = P_OA(:,1);                        %store P_OA
-            %thisP_OnotA(trialnb,1) = P_OA(:,2);                 %store P_OnotA
-            %thisdeltaP(trialnb,1) = deltaP;                     
+            stimOrder(trialnb,1) = condOrder(:,x);              %store stimulus order (play_pause or pause_play)
+            %condition(trialnb,1) = condition(x,1);              %store condition number 1-30
+            %P_OA(trialnb,1) = P_OA(:,1);                       %store P_OA
+            %thisP_OnotA(trialnb,1) = P_OA(:,2);                %store P_OnotA
+            %thisdeltaP(trialnb,1) = deltaP;
+            save(backupfile)                                    % backs the entire workspace up just in case we have to do a nasty abort
             RestrictKeysForKbCheck([27,37,39]);                 %restrict key presses to right and left arrows
             
-            %Present stimuli
+            %Draw stimuli play / do not play
             if condOrder(:,x)==0   
                 Screen('DrawTexture', win, texPlay,[],imageRectPlayLeft);
                 Screen('DrawTexture', win, texPause,[],imageRectPauseRight);
@@ -223,7 +225,8 @@ for x = 1:nblocks
                         Screen('DrawTexture', win, texPlay,[],imageRectPlayRight);
                         Screen('DrawTexture', win, texPause,[],imageRectPauseLeft);
                     end                    
-                 DrawFormattedText(win,['?'],xc+30,yc+30,red);    
+                 %DrawFormattedText(win,'?',xc+30,yc+30,red);
+                 Screen('DrawTexture', win, texQMark,[],imageQMark);
                  Screen('Flip',win);
                  WaitSecs(.5);
                  lateTrials(trialnb,1) = 1;
@@ -239,7 +242,7 @@ for x = 1:nblocks
                     n = 2;
                end
                
-            %Set outcomes according to A-O contingencies
+            %Show outcome based on pseudorandom sequence
                 if trials_P_OA_shuffled(trialnb,n) == 1
                     if condOrder(:,x)==0   
                         Screen('DrawTexture', win, texPlay,[],imageRectPlayLeft);
@@ -274,13 +277,8 @@ for x = 1:nblocks
             k=k+1;
         end
               
-end
-           
 %% ========= END-OF-BLOCK QUESTIONS ========= %
         if i >= 2 %skip questions after practice run 
-        respQ0=str2num(Ask(win,'hi!',white,black,'GetChar',[800 300 1000 1500],'center',20)); %AskQ is a PTB function modified to accommodate more text, renamed and saved in local directory
-        Screen('Flip',win);    
-            
         respQ1=str2num(AskQ1(win,'    ',white,black,'GetChar',[800 300 1000 1500],'center',20)); %AskQ is a PTB function modified to accommodate more text, renamed and saved in local directory
         Screen('Flip',win);
         
@@ -299,6 +297,7 @@ end
         respEndOfBlock{blocknb,3}=respQ3;
         respEndOfBlock{blocknb,4}=respQ4;
         end
+end        
 
 %Breaks after runs & end message
 if i == 1 && x == 1
@@ -327,7 +326,7 @@ end
        
 %% ========= SAVE DATA & CLOSE ========= %
 subject(1:trialnb,1) = subjectID;
-data = [subject, thisblock, condition, thistrial, choices, outcomes, reactionTimes, nLateTrialsThisBlock];
+data = [subject, thisblock, stimOrder, thistrial, choices, outcomes, reactionTimes, nLateTrialsThisBlock];
 dataQuestions = (respEndOfBlock);
 save(resultnameQuestions, 'dataQuestions');
 save(resultname, 'data');

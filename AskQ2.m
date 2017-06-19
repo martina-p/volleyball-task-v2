@@ -1,4 +1,4 @@
-function reply=AskQ1(window,message,textColor,bgColor,replyFun,rectAlign1,rectAlign2,fontsize)
+function reply=AskQ2(window,message,textColor,bgColor,replyFun,rectAlign1,rectAlign2,fontsize)
 % reply = Ask(window,message,[textColor],[bgColor],[replyFun],[rectAlign1],[rectAlign2],[fontSize=30])
 %
 % Draw the message, using textColor, right-justified in the upper right of
@@ -203,4 +203,3 @@ Screen('TextSize', window ,oldFontSize);
 return;
 
 end
-

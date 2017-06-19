@@ -1,5 +1,4 @@
  %% PTB parameters
-
     % Screen Preferences
     Screen('Preference', 'VBLTimestampingMode', 3);%Add this to avoid timestamping problems
     Screen('Preference', 'DefaultFontName', 'Geneva');
@@ -26,12 +25,10 @@
     HideCursor;
     
 %% Load instruction slides
-    
     slide1=imread(fullfile('Stimfiles', 'Slide1.bmp')); 
     texslide1 = Screen('MakeTexture', win, slide1);
     
 %% Load stimuli
-
     Lose=imread(fullfile('Stimfiles', 'Lose.png')); 
     texLose = Screen('MakeTexture', win, Lose);
     Win=imread(fullfile('Stimfiles', 'Win.png')); 
@@ -40,6 +37,8 @@
     texPlay = Screen('MakeTexture', win, Play);
     Pause=imread(fullfile('Stimfiles', 'without.png')); 
     texPause = Screen('MakeTexture', win, Pause);
+    QMark=imread(fullfile('Stimfiles', 'questionmark.png')); 
+    texQMark = Screen('MakeTexture', win, QMark);
     
 %% Stimuli size & positions 
     %Play
@@ -57,6 +56,10 @@
     %Lose
     [imageHeight, imageWidth, colorChannels] = size(Win);
     imageLose = [0 0 imageWidth./10 imageHeight./10];
+    
+    %Question mark
+    [imageHeight, imageWidth, colorChannels] = size(QMark);
+    imageQMark = [0 0 imageWidth./10 imageHeight./10];
     
     %xc = winRect(3)/2;
     %yc = winRect(4)/2;
@@ -77,6 +80,9 @@
     
     %Lose Center position
     imageLose = [xc, yc, xc+imageLose(:,3), yc+imageLose(:,4)];
+    
+    %Question mark Center position
+    imageQMark = [xc, yc, xc+imageQMark(:,3), yc+imageQMark(:,4)];
     
     %Fixation cross
     crossLength=10;

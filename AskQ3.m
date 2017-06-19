@@ -1,4 +1,4 @@
-function reply=AskQ1(window,message,textColor,bgColor,replyFun,rectAlign1,rectAlign2,fontsize)
+function reply=AskQ3(window,message,textColor,bgColor,replyFun,rectAlign1,rectAlign2,fontsize)
 % reply = Ask(window,message,[textColor],[bgColor],[replyFun],[rectAlign1],[rectAlign2],[fontSize=30])
 %
 % Draw the message, using textColor, right-justified in the upper right of
@@ -114,7 +114,7 @@ white = [255 255 255];
 
 line1 = 'La tua risposta è stata registrata correttamente.';
 line2 = '\n \n \n Ora rispondi (SI o NO): ';
-line3 = '\n \n Suggeriresti alla squadra di comprare il giocatore? ';
+line3 = '\n \n Compreresti questo giocatore al prossimo campionato? ';
 line4 = '\n \n \n Inserisci adesso la tua risposta con la tastiera, poi premi INVIO per continuare o BACKSPACE per cancellare:';  
 
 DrawFormattedText(window,[line1 line2 line3 line4],'center','center',white);
@@ -200,4 +200,3 @@ Screen('TextSize', window ,oldFontSize);
 return;
 
 end
-
