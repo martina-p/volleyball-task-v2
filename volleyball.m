@@ -97,7 +97,7 @@ while exitInstructions == false              %loop instruction slides until spac
 end
 
 %% ========= LOOPS (RUN, BLOCK, TRIAL) ========= %
-totalCount = 0;     %this will be equal to the total nr of trials in the end
+totalCount = 0;     %to count total nr of trials
 runnb = 0;          %initial run value     
 
 %RUN LOOP
@@ -187,12 +187,12 @@ for x = 1:nblocks
         %First screen of the block, indtroduce the "player"
         DrawFormattedText(win,['Stai per simulare una partita della squadra numero  ' num2str(thisblockplayer)],'center','center',white);
         Screen('Flip',win);
-        WaitSecs(.1);
+        WaitSecs(.3);
     
         %Fixation cross
         Screen('DrawLines',win,crossLines,crossWidth,crossColor,[xc,yc]);
         Screen('Flip',win);
-        WaitSecs(.1);
+        WaitSecs(.2);
         
         k = 0;
  
@@ -348,8 +348,7 @@ end
 %% ========= SAVE DATA & CLOSE ========= %
 Data = struct2table(data);
 save(resultname, 'Data');
-
-dataQuestions = (respEndOfBlock);
+dataQuestions = (respEndOfBlock); %
 save(resultnameQuestions, 'dataQuestions');
 
 %Close screen and escape
