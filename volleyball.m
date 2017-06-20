@@ -55,6 +55,7 @@ longBlocks = [38 40 42];
 
 cond = [0 0 0 0 0 1 1 1 1 1];                   %for play_pause or pause_play display
 players = randperm(30+1);                       %create as many unique "player numbers" as there are blocks, + 1 for the practice run
+respEndOfBlock = (30,4);                        %preallocate respEndOfBlock answers
 %% ========= INSTRUCTIONS ========= %
 psychExpInit;                                %start PTB
 RestrictKeysForKbCheck([32,37,39]);          %restrict key presses to space, right and left arrows
@@ -187,12 +188,12 @@ for x = 1:nblocks
         %First screen of the block, indtroduce the "player"
         DrawFormattedText(win,['Stai per simulare una partita della squadra numero  ' num2str(thisblockplayer)],'center','center',white);
         Screen('Flip',win);
-        WaitSecs(.3);
+        WaitSecs(.1);
     
         %Fixation cross
         Screen('DrawLines',win,crossLines,crossWidth,crossColor,[xc,yc]);
         Screen('Flip',win);
-        WaitSecs(.2);
+        WaitSecs(.1);
         
         k = 0;
  
@@ -235,7 +236,7 @@ for x = 1:nblocks
                  %DrawFormattedText(win,'?',xc+30,yc+30,red);
                  Screen('DrawTexture', win, texQMark,[],imageQMark);
                  Screen('Flip',win);
-                 WaitSecs(.5);
+                 WaitSecs(.1);
                  lateTrials(trialnb,1) = 1;
                  continue
                 end
@@ -272,7 +273,7 @@ for x = 1:nblocks
                     Screen('DrawTexture', win, texLose,[],imageLose);    
                 end;
                     Screen('Flip',win);
-                    WaitSecs(.2);
+                    WaitSecs(.1);
                
             nLateTrials = numel(find(lateTrials(:,1)==1)); %count how many late trials there have been
             nLateTrialsThisBlock(trialnb,1) = nLateTrials; %this is for adding it to data table
@@ -298,23 +299,23 @@ for x = 1:nblocks
               
 %% ========= END-OF-BLOCK QUESTIONS ========= %
         if i >= 2 %skip questions after practice run 
-        respQ1=str2num(AskQ1(win,'    ',white,black,'GetChar',[800 300 1000 1500],'center',20)); %AskQ is a PTB function modified to accommodate more text, renamed and saved in local directory
+        respQ1=str2num(AskQ1(win,'    ',white,black,'GetChar',[800 300 1000 1500],'center',20)); %PTB function modified to accommodate more text, renamed and saved in local directory
         Screen('Flip',win);
         
-        respQ2=str2num(AskQ2(win,'    ',white,black,'GetChar',[800 300 1000 1500],'center',20)); %AskQ is a PTB function modified to accommodate more text, renamed and saved in local directory
+        respQ2=str2num(AskQ2(win,'    ',white,black,'GetChar',[800 300 1000 1500],'center',20)); %PTB function modified to accommodate more text, renamed and saved in local directory
         Screen('Flip',win);
         
-        respQ3=AskQ3(win,'    ',white,black,'GetChar',[800 300 1000 1500],'center',20); %AskQ is a PTB function modified to accommodate more text, renamed and saved in local directory
+        respQ3=AskQ3(win,'    ',white,black,'GetChar',[800 300 1000 1500],'center',20); %PTB function modified to accommodate more text, renamed and saved in local directory
         Screen('Flip',win);
         
-        respQ4=AskQ4(win,'    ',white,black,'GetChar',[800 300 1000 1500],'center',20); %AskQ is a PTB function modified to accommodate more text, renamed and saved in local directory
+        respQ4=AskQ4(win,'    ',white,black,'GetChar',[800 300 1000 1500],'center',20); %PTB function modified to accommodate more text, renamed and saved in local directory
         Screen('Flip',win);
         
         %Store responses after each block
-        respEndOfBlock{blocknb,1}=respQ1;
-        respEndOfBlock{blocknb,2}=respQ2;
-        respEndOfBlock{blocknb,3}=respQ3;
-        respEndOfBlock{blocknb,4}=respQ4;
+        respEndOfBlock(blocknb,1)=respQ1;
+        respEndOfBlock(blocknb,2)=respQ2;
+        respEndOfBlock(blocknb,3)=respQ3;
+        respEndOfBlock(blocknb,4)=respQ4;
         end
 end        
 

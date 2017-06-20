@@ -113,7 +113,7 @@ bgColor = [0 0 0 0];
 white = [255 255 255];
 
 line1 = 'La tua risposta è stata registrata correttamente.';
-line2 = '\n \n \n Ora rispondi (SI o NO): ';
+line2 = '\n \n \n Ora rispondi (scrivi 1 per "SI" o 2 per "NO"): ';
 line3 = '\n \n Compreresti questo giocatore al prossimo campionato? ';
 line4 = '\n \n \n Inserisci adesso la tua risposta con la tastiera, poi premi INVIO per continuare o BACKSPACE per cancellare:';  
 
