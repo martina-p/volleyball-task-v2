@@ -36,7 +36,7 @@ longBlocks = [38 40 42];
 
 cond = [0 0 0 0 0 1 1 1 1 1];                   %for play_pause or pause_play display
 players = randperm(30+1);                       %create as many unique "player numbers" as there are blocks, + 1 for the practice run
-respEndOfBlock = [30 4];                        %preallocate respEndOfBlock answers
+respEndOfBlock = zeros(30,4);                        %preallocate respEndOfBlock answers
 %% ========= INSTRUCTIONS ========= %
 psychExpInit;                                %start PTB
 RestrictKeysForKbCheck([32,37,39]);          %restrict key presses to space, right and left arrows
@@ -144,7 +144,7 @@ for i = 1:nruns
             thisDP = table2array(thisDPTable);    %keep track of DP for this block (after practice run)
         end
         
-        respEndOfBlock = {length(ntrials),4}; %prealocate responses to end-of-block questions
+        %respEndOfBlock = {length(ntrials),4}; %prealocate responses to end-of-block questions
         
         % Set late trials
         lateTrials = zeros(ntrials,1);  %preallocate late trials occurrences
@@ -278,6 +278,9 @@ for i = 1:nruns
         Screen('Flip',win);
         
         %Store responses after each block
+        %respEndOfBlock(blocknb) = blocknb;
+        %respBlock = cell2mat(blocknb);
+        
         respEndOfBlock(blocknb,1)=respQ1;
         respEndOfBlock(blocknb,2)=respQ2;
         respEndOfBlock(blocknb,3)=respQ3;
@@ -296,7 +299,7 @@ elseif i == 4
     pickblock = randsample(1:30,1);                                     %pick a random block
     DPpayment = shuffledT(pickblock, {'DP'});                           %determine the DP for that block
     thisDPpayment = table2array(DPpayment);                             %extract it from the table
-    score = abs(thisDPpayment - respEndOfBlock{pickblock,1});           %look up that block's respQ1 and subtract it from that block's deltaP
+    score = abs(thisDPpayment - respEndOfBlock(pickblock,1));           %look up that block's respQ1 and subtract it from that block's deltaP
     earning = 5+(0.1*(10-score).^2);                                    %plug score in payment equation and add 5 show-up fee
     %display earning
     DrawFormattedText(win,'FINE DEL GIOCO \n \n Grazie della partecipazione. \n \n Hai vinto Euro:','center','center',white);
