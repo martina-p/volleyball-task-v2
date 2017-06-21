@@ -19,7 +19,7 @@ shuffledT = T(randperm(size(T,1)),:);               %shuffle T rows (ie shuffle 
 
 %Create contingency tables for different number of trials
 A = shuffledT.NOA;
-C = shuffledT.NOnA;
+C = shuffledT.NonA;
 contTable = [A C];
 
 %% ========= EXPERIMENT STRUCTURE ========= %
@@ -36,7 +36,7 @@ longBlocks = [38 40 42];
 
 cond = [0 0 0 0 0 1 1 1 1 1];                   %for play_pause or pause_play display
 players = randperm(30+1);                       %create as many unique "player numbers" as there are blocks, + 1 for the practice run
-respEndOfBlock = {30,4};                        %preallocate respEndOfBlock answers
+respEndOfBlock = [30 4];                        %preallocate respEndOfBlock answers
 %% ========= INSTRUCTIONS ========= %
 psychExpInit;                                %start PTB
 RestrictKeysForKbCheck([32,37,39]);          %restrict key presses to space, right and left arrows
@@ -113,15 +113,14 @@ for i = 1:nruns
         end
         
         %Set contingencies, taking into account number of trials:
-        %For practice trials
-        if i == 1
-            % For practice, we can use a random sequence of outcomes
+        %For practice trials, we can use a random sequence of outcomes
+        if i == 1 
             ntrials = 10;
             trials_P_OA = [zeros(5,2) ; ones(5,2)];
             trials_P_OA_shuffled = trials_P_OA(randperm(ntrials),:);
         else
             % For real experiment, set pseudo-random sequence of outcomes
-            % Gget an arbitrary large number of repetitions
+            % Get an arbitrary large number of repetitions
             % (100). Blocks are in 4 actions because probs are 0, 0.25, 0.5,
             % 0.75 and 1
             nrep = 100;
@@ -129,17 +128,17 @@ for i = 1:nruns
             % For actions
             for na = 1:2
                 % Fills in with ones
-                trials_P_OA(1:contTable(blocknb,na),:,na) = ones(1:conTable(blocknb,ns),nrep);
+                trials_P_OA(1:contTable(blocknb,na),:,na) = ones(contTable(blocknb,na),nrep); %genera matrice di mini blocchi di 4 che nelle righe successive appende reshpae e mette uno dietro l'altro
                 % Permute
                 trials_P_OA(:,:,na) = trials_P_OA(randperm(4),:,na);
             end
             % Reshape
             trials_P_OA = reshape(trials_P_OA, [ 4*nrep 2 ]);
             % Cut to ntrials
-            trials_P_OA_shuffled = trials_P_OA(1:ntrials,:);
+            trials_P_OA_shuffled = trials_P_OA(1:ntrials,:); %taglia in base al numero di trials
             
             % Set conditions
-            thisConditionT = shuffledT(blocknb, {'Condition'}); %keep track of the condition for this block (after practice run)
+            thisConditionT = shuffledT(blocknb, {'condition'}); %keep track of the condition for this block (after practice run)
             thisCondition = table2array(thisConditionT);
             thisDPTable = shuffledT(blocknb, {'DP'});
             thisDP = table2array(thisDPTable);    %keep track of DP for this block (after practice run)
@@ -289,7 +288,7 @@ end
 %Breaks after runs & end message
 if i == 1 && x == 1
     RestrictKeysForKbCheck([32]);               %restrict key presses to space
-    DrawFormattedText(win,'FINE DEL TRAINING \n \n Premi SPAZIO quando sei pronto per cominciare con l esperimento vero e proprio. \n \n Se qualcosa non ti ? chiaro, alza la mano e uno degli sperimentatori verr? a rispondere alle tue domande.','center','center',white);
+    DrawFormattedText(win,'FINE DEL TRAINING \n \n Premi SPAZIO quando sei pronto per cominciare con l esperimento vero e proprio. \n \n Se qualcosa non ti è chiaro, alza la mano e uno degli sperimentatori verrà a rispondere alle tue domande.','center','center',white);
     Screen('Flip',win);
     [secs, keyCode, deltaSecs] = KbWait([],2);  %wait forkey press (self-paced start after practice session)
 elseif i == 4    
