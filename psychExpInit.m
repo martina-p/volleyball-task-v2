@@ -5,7 +5,7 @@
     Screen('Preference', 'DefaultFontSize', 20); %fontsize
     Screen('Preference', 'DefaultFontStyle', 0); % 0=normal,1=bold,2=italic,4=underline,8=outline,32=condense,64=extend,1+2=bold and italic.
     Screen('Preference', 'DefaultTextYPositionIsBaseline', 1); % align text on a line 
-    
+     
     % Colors definition
     white = [255 255 255]; 
     black = [0 0 0]; 
@@ -25,7 +25,7 @@
     HideCursor;
     
 %% Load instruction slides
-    slide1=imread(fullfile('Stimfiles', 'Slide1.bmp')); 
+    slide1=imread(fullfile('Stimfiles', 'Diapositive1.png')); 
     texslide1 = Screen('MakeTexture', win, slide1);
     
 %% Load stimuli

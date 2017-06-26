@@ -112,14 +112,15 @@ end
 bgColor = [0 0 0 0];
 white = [255 255 255];
 
-line1 = 'Questa simulazione ? terminata.';
+line1 = 'Questa simulazione è terminata.';
 line2 = '\n \n \n Ora giudica il valore di questo giocatore con un valore compreso tra 0 e 10.';
 line3 = '\n\n Per esempio:';
 line4 = '\n \n 0: il giocatore non ha alcun impatto sulla formazione';
 line5 = '\n \n 10: Il giocatore fa sempre vincere la formazione in cui gioca';
-line6 = '\n \n \n Inserisci adesso la tua risposta con la tastiera, poi premi INVIO per continuare o BACKSPACE per cancellare:';  
+line6 = '\n \n  ';
+line7 = '\n \n \n Inserisci adesso la tua risposta con la tastiera, poi premi INVIO per continuare o BACKSPACE per cancellare:';  
 
-DrawFormattedText(window,[line1 line2 line3 line4 line5 line6 ],'center','center',white);
+DrawFormattedText(window,[line1 line2 line3 line4 line5 line6 line7],'center','center',white);
 [oldX, oldY]=Screen(window,'DrawText',message,r(RectLeft),r(RectBottom),textColor);
 Screen('Flip', window, 0, dontClear);      % asg added
 
@@ -127,7 +128,7 @@ if strcmp(replyFun,'GetChar')
     FlushEvents('keyDown');
     i=1;
     reply(i)=GetChar(0,1);  % get the 1st typed character (with no timing info. and ascii codes only)
-    DrawFormattedText(window,[line1 line2 line3 line4 line5 line6 ],'center','center',white);
+    DrawFormattedText(window,[line1 line2 line3 line4 line5 line6 line7],'center','center',white);
     [newX(i), newY(i)]=Screen(window,'DrawText',char(reply(i)),oldX,oldY,textColor); % put coverted ascii code letter on screen
     Screen('Flip', window, 0, dontClear);   % flip it to the screen
     i=2;
@@ -136,7 +137,7 @@ if strcmp(replyFun,'GetChar')
     while reply(i)==8  % backspace/delete was typed
         i=1;
         Screen('FillRect', window, bgColor);
-        DrawFormattedText(window,[line1 line2 line3 line4 line5 line6 ],'center','center',white);
+        DrawFormattedText(window,[line1 line2 line3 line4 line5 line6 line7],'center','center',white);
         [oldX, oldY]=Screen(window,'DrawText',message,r(RectLeft),r(RectBottom),textColor); % redraw text with no response letters
         Screen('Flip', window, 0, dontClear);   % flip it to the screen
         reply(i)=GetChar(0,1);  % get the next typed character (with no timing info. and ascii codes only)
@@ -149,24 +150,24 @@ if strcmp(replyFun,'GetChar')
     end;
 
     while ~eq(reply(i),10)  && ~eq(reply(i),13) % until they hit RETURN
-        DrawFormattedText(window,[line1 line2 line3 line4 line5 line6 ],'center','center',white);
+        DrawFormattedText(window,[line1 line2 line3 line4 line5 line6 line7],'center','center',white);
         [newX(i), newY(i)]=Screen(window,'DrawText',char(reply(i)),newX(i-1),newY(i-1),textColor); % put coverted ascii code letter on screen
         Screen('Flip', window, 0, dontClear);   % flip it to the screen
         i=i+1;
         reply(i)=GetChar(0,1);  % get the next character (with no timing info. and ascii codes only)
         while reply(i)==8  % backspace/delete was typed
-            DrawFormattedText(window,[line1 line2 line3 line4 line5 line6 ],'center','center',white);
+            DrawFormattedText(window,[line1 line2 line3 line4 line5 line6 line7],'center','center',white);
             Screen('Flip', window, 0, dontClear);
             i=i-1;
             if i<2  % can't backspace too far!
                 i=1;
                 Screen('FillRect', window, bgColor);
-                DrawFormattedText(window,[line1 line2 line3 line4 line5 line6 ],'center','center',white);
+                DrawFormattedText(window,[line1 line2 line3 line4 line5 line6 line7],'center','center',white);
                 [oldX, oldY]=Screen(window,'DrawText',message,r(RectLeft),r(RectBottom),textColor);% redraw text with no response letters
                 Screen('Flip', window, 0, dontClear);   % flip it to the screen
                 reply(i)=GetChar(0,1);
                 if reply(i)~=8
-                    DrawFormattedText(window,[line1 line2 line3 line4 line5 line6 ],'center','center',white);
+                    DrawFormattedText(window,[line1 line2 line3 line4 line5 line6 line7],'center','center',white);
                     [newX(i), newY(i)]=Screen(window,'DrawText',char(reply(i)),oldX,oldY,textColor);
                     Screen('Flip', window, 0, dontClear);
                     i=2;
@@ -174,7 +175,7 @@ if strcmp(replyFun,'GetChar')
                 end;
             elseif i>1
                 Screen('FillRect', window, bgColor);
-                DrawFormattedText(window,[line1 line2 line3 line4 line5 line6 ],'center','center',white);
+                DrawFormattedText(window,[line1 line2 line3 line4 line5 line6 line7],'center','center',white);
                 [oldX, oldY]=Screen(window,'DrawText',message,r(RectLeft),r(RectBottom),textColor);
                 [newX(i-1), newY(i-1)]=Screen(window,'DrawText',char(reply(1:i-1)), oldX, oldY, textColor); % put old letters on screen
                 Screen('Flip', window, 0, dontClear);   % flip it to the screen
