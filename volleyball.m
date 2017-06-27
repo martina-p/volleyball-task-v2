@@ -91,10 +91,10 @@ ntotal_exp = 0;
     
     if i == 2 %if this is the first run, start adding up to blocknb from 0
         blocknb = 0;
-    elseif i == 3 %if this is the second run, start adding up to blocknb from 10
-        blocknb = 10;
-    elseif i == 4 %if this is the third run, start adding up to blocknb from 20
-        blocknb = 20;
+    elseif i == 3 %if this is the second run, start adding up to blocknb from 15
+        blocknb = 15;
+    elseif i == 4 %if this is the third run, start adding up to blocknb from 30
+        blocknb = 30;
     end
     
     %BLOCK LOOP
@@ -207,7 +207,6 @@ ntotal_exp = 0;
                     Screen('DrawTexture', win, texPlay,[],imageRectPlayRight);
                     Screen('DrawTexture', win, texPause,[],imageRectPauseLeft);
                 end
-                %DrawFormattedText(win,'?',xc+30,yc+30,red);
                 Screen('DrawTexture', win, texQMark,[],imageQMark);
                 Screen('Flip',win);
                 WaitSecs(0.5);
@@ -286,45 +285,41 @@ ntotal_exp = 0;
               
 %% ========= END-OF-BLOCK QUESTIONS ========= %
         if i >= 2 %skip questions after practice run 
-        respQ1=str2num(AskQ1(win,'    ',white,black,'GetChar',[800 300 1000 1500],'center',20)); %PTB function modified to accommodate more text, renamed and saved in local directory
+        respQ1=str2num(AskQ1(win,'    ',white,black,'GetChar',[800 300 800 950],'center',20)); %PTB function modified to accommodate more text, renamed and saved in local directory
         Screen('Flip',win);
         while isempty(respQ1) | isnumeric(respQ1)==0
             DrawFormattedText(win,'La tua risposta non è stata registrata correttamente. Riprova.','center','center',white);
             Screen('Flip',win);
             WaitSecs(1);  
-            respQ1=str2num(AskQ1(win,'    ',white,black,'GetChar',[800 300 1000 1500],'center',20)); %PTB function modified to accommodate more text, renamed and saved in local directory
+            respQ1=str2num(AskQ1(win,'    ',white,black,'GetChar',[800 300 800 950],'center',20)); %PTB function modified to accommodate more text, renamed and saved in local directory
         end
         
-        respQ2=str2num(AskQ2(win,'    ',white,black,'GetChar',[800 300 1000 1500],'center',20)); %PTB function modified to accommodate more text, renamed and saved in local directory
+        respQ2=str2num(AskQ2(win,'    ',white,black,'GetChar',[800 300 800 950],'center',20)); %PTB function modified to accommodate more text, renamed and saved in local directory
         Screen('Flip',win);
         while isempty(respQ2) | isnumeric(respQ2)==0
             DrawFormattedText(win,'La tua risposta non è stata registrata correttamente. Riprova.','center','center',white);
             Screen('Flip',win);
             WaitSecs(2);
-            respQ2=str2num(AskQ2(win,'    ',white,black,'GetChar',[800 300 1000 1500],'center',20)); %PTB function modified to accommodate more text, renamed and saved in local directory
+            respQ2=str2num(AskQ2(win,'    ',white,black,'GetChar',[800 300 800 950],'center',20)); %PTB function modified to accommodate more text, renamed and saved in local directory
         end
         
-        respQ3=str2num(AskQ3(win,'    ',white,black,'GetChar',[800 300 1000 1500],'center',20)); %PTB function modified to accommodate more text, renamed and saved in local directory
+        respQ3=str2num(AskQ3(win,'    ',white,black,'GetChar',[800 300 800 950],'center',20)); %PTB function modified to accommodate more text, renamed and saved in local directory
         Screen('Flip',win);
         while isempty(respQ3) | isnumeric(respQ3)==0
             DrawFormattedText(win,'La tua risposta non è stata registrata correttamente. Riprova.','center','center',white);
             Screen('Flip',win);
             WaitSecs(2);
-            respQ3=str2num(AskQ3(win,'    ',white,black,'GetChar',[800 300 1000 1500],'center',20)); %PTB function modified to accommodate more text, renamed and saved in local directory
+            respQ3=str2num(AskQ3(win,'    ',white,black,'GetChar',[800 300 800 950],'center',20)); %PTB function modified to accommodate more text, renamed and saved in local directory
         end
         
-        respQ4=str2num(AskQ4(win,'    ',white,black,'GetChar',[800 300 1000 1500],'center',20)); %PTB function modified to accommodate more text, renamed and saved in local directory
+        respQ4=str2num(AskQ4(win,'    ',white,black,'GetChar',[800 300 800 950],'center',20)); %PTB function modified to accommodate more text, renamed and saved in local directory
         Screen('Flip',win);
         while isempty(respQ4) | isnumeric(respQ4)==0
             DrawFormattedText(win,'La tua risposta non è stata registrata correttamente. Riprova.','center','center',white);
             Screen('Flip',win);
             WaitSecs(2);
-            respQ4=str2num(AskQ4(win,'    ',white,black,'GetChar',[800 300 1000 1500],'center',20)); %PTB function modified to accommodate more text, renamed and saved in local directory
+            respQ4=str2num(AskQ4(win,'    ',white,black,'GetChar',[800 300 800 950],'center',20)); %PTB function modified to accommodate more text, renamed and saved in local directory
         end
-        
-        %Store responses after each block
-        %respEndOfBlock(blocknb) = blocknb;
-        %respBlock = cell2mat(blocknb);
         
         respEndOfBlock(blocknb,1)=respQ1;
         respEndOfBlock(blocknb,2)=respQ2;
@@ -341,7 +336,7 @@ if i == 1 && x == 1
     [secs, keyCode, deltaSecs] = KbWait([],2);  %wait forkey press (self-paced start after practice session)
 elseif i == 4    
     %calculate earning 
-    pickblock = randsample(1:45,1);                                     %pick a random block
+    pickblock = randi([1 45],1);                                     %pick a random block
     DPpayment = shuffledT(pickblock, {'DP'});                           %determine the DP for that block
     thisDPpayment = table2array(DPpayment);                             %extract it from the table
     score = abs(thisDPpayment - respEndOfBlock(pickblock,1));           %look up that block's respQ1 and subtract it from that block's deltaP
